@@ -1,0 +1,59 @@
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "gustavolyra23@gmail.com",
+    "password": "Altoastra23#"
+} 
+
+###
+POST http://localhost:3000/partners
+Content-Type: application/json
+
+{
+    "name": "Partner 1",
+    "email": "gustavolyra23@gmail.com",
+    "password": "Altoastra23#",
+    "comapny_name": "Company 1"
+} 
+ 
+###
+POST http://localhost:3000/customers
+Content-Type: application/json
+
+{
+    "name": "Partner 1",
+    "email": "gustavolyra23@gmail.com",
+    "password": "Altoastra23#",
+    "address": "Address 1",
+    "phone": "1234567890"
+}   
+
+### Criacao de evento pelo parceiro
+POST http://localhost:3000/partners/events
+Content-Type: application/json
+
+{
+    "name": "Partner 1",
+    "description": "event description",
+    "date": "2025-01-01T00:00:00", 
+    "location": "Address 1"
+}  
+
+###
+GET http://localhost:3000/events
+
+###
+GET http://localhost:3000/events/1 
+
+###
+GET http://localhost:3000/partners/events
+
+###
+GET http://localhost:3000/partners/events/1
+
+
+
+
+
+
