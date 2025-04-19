@@ -1,22 +1,12 @@
+/*
+ File made to define routes and middleware for the application.
+ This file is the entry point for the application and is responsible for setting up the server and defining the routes.
+*/
 import express from 'express';
-import * as mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
 dotenv.config();
 console.log("User and Password " + process.env.MYSQL_USER, process.env.MYSQL_PASSWORD)
-
-//connect to mysql database...
-function createConnection() {
-    return mysql.createConnection({
-        host: "localhost",
-        port: 3306,
-        user: "gustavo",
-        password: process.env.MYSQL_PASSWORD,
-        database: "ticket",
-    });
-}
-
-let connection = createConnection()
 
 const app = express();
 const PORT = process.env.PORT || 3000;

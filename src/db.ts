@@ -21,7 +21,5 @@ export class Database {
         }
         return Database.instance;
     }
-
-
 }
 
