@@ -1,14 +1,14 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Database } from "../db";
+import { Database } from "../database";
 
 export class EventModel {
-  id?: number;
-  name?: string;
-  description?: string | null;
-  date?: Date;
-  location?: string;
-  created_at?: Date;
-  partner_id?: number;
+  id: number;
+  name: string;
+  description: string | null;
+  date: Date;
+  location: string;
+  created_at: Date;
+  partner_id: number;
 
   constructor(data: Partial<EventModel> = {}) {
     this.fill(data);

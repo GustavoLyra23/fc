@@ -1,10 +1,10 @@
 import { ResultSetHeader, RowDataPacket, PoolConnection } from "mysql2/promise";
-import { Database } from "../db";
+import {Database} from "../database";
 
 export class PurchaseTicketModel {
-  id?: number;
-  purchase_id?: number;
-  ticket_id?: number;
+  id: number;
+  purchase_id: number;
+  ticket_id: number;
 
   constructor(data: Partial<PurchaseTicketModel> = {}) {
     this.fill(data);

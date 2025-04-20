@@ -1,67 +1,92 @@
-/*
- File made to define routes and middleware for the application.
- This file is the entry point for the application and is responsible for setting up the server and defining the routes.
-*/
-import express from 'express';
-import dotenv from 'dotenv';
+import express from "express";
+import jwt from "jsonwebtoken";
+import { Database } from "./database";
+import { authRoutes } from "./controller/auth-controller";
+import { partnerRoutes } from "./controller/partner-controller";
+import { customerRoutes } from "./controller/customer-controller";
+import { eventRoutes } from "./controller/event-controller";
+import { UserService } from "./services/user-service";
+import { ticketRoutes } from "./controller/ticket-controller";
+import { purchaseRoutes } from "./controller/purchase-controller";
 
-dotenv.config();
-console.log("User and Password " + process.env.MYSQL_USER, process.env.MYSQL_PASSWORD)
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+//Model View Controller - Arquitetura camadas
+//Middleware
 
-// Middleware
-app.use(express.json()); // Middleware to parse JSON bodies
+export const app = express();
 
-app.get('/', (req, res) => {
-    const message = { "message": "Hello, World!" }
-    res.json(message);
+app.use(express.json());
+
+const unprotectedRoutes = [
+  { method: "POST", path: "/auth/login" },
+  { method: "POST", path: "/customers/register" },
+  { method: "POST", path: "/partners/register" },
+  { method: "GET", path: "/events" },
+];
+
+app.use(async (req, res, next) => {
+  const isUnprotectedRoute = unprotectedRoutes.some(
+    (route) => route.method == req.method && req.path.startsWith(route.path)
+  );
+
+  if (isUnprotectedRoute) {
+    return next();
+  }
+
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ message: "No token provided" });
+    return;
+  }
+
+  try {
+    const payload = jwt.verify(token, "123456") as {
+      id: number;
+      email: string;
+    };
+    const userService = new UserService();
+    const user = await userService.findById(payload.id)
+    if (!user) {
+      res.status(401).json({ message: "Failed to authenticate token" });
+      return;
+    }
+    req.user = user as { id: number; email: string };
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Failed to authenticate token" });
+  }
 });
 
-app.post('/partners', (req, res) => {
-    const { name, email, password, comapny_name } = req.body
-})
+app.get("/", (req, res) => {
+  res.json({ message: "Hello World!" });
+});
 
-app.post("/customers", (req, res) => {
-    const { name, email, password, adress, telefone } = req.body
-})
-
-
-app.post("/partners/events", (req, res) => {
-    const { name, description, date, location } = req.body
-    res.send('Event created successfully!');
-})
-
-app.get("/partners/events/:eventId", (req, res) => {
-    const { eventId } = req.params
-    console.log(eventId)
-    res.send()
-})
+app.use('/auth', authRoutes);
+app.use('/partners', partnerRoutes);
+app.use('/customers', customerRoutes);
+app.use('/events', eventRoutes);
+app.use('/events', ticketRoutes)
+app.use('/purchases', purchaseRoutes);
 
 
-app.get("/partners/events", (req, res) => {
-    res.send()
-})
-
-app.get("/events", (req, res) => {
-    res.send()
-})
-
-app.get("/events/:eventId", (req, res) => {
-    const { eventId } = req.params
-    console.log(eventId)
-    res.send()
-})
-
-app.post('/auth/login', (req, res) => {
-    //destructuring...
-    const { email, password } = req.body
-    console.log(email, password)
-    res.send('Login successful!');
+app.listen(3000, async () => {
+  const connection = Database.getInstance();
+  await connection.execute("SET FOREIGN_KEY_CHECKS = 0");
+  await connection.execute("TRUNCATE TABLE reservation_tickets");
+  await connection.execute("TRUNCATE TABLE purchase_tickets");
+  await connection.execute("TRUNCATE TABLE purchases");
+  await connection.execute("TRUNCATE TABLE tickets");
+  await connection.execute("TRUNCATE TABLE events");
+  await connection.execute("TRUNCATE TABLE customers");
+  await connection.execute("TRUNCATE TABLE partners");
+  await connection.execute("TRUNCATE TABLE users");
+  await connection.execute("SET FOREIGN_KEY_CHECKS = 1");
+  console.log("Running in http://localhost:3000");
 });
 
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+//MVC - Model View Controller (Arquitetura em camadas)
+
+//Application Service - o que eu quero expor como regras cruciais da aplicação
+//Domain Service - Criptografar senha
+//Active Record - Encapsular lógica de arma. e de negócio

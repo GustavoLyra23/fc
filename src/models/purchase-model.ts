@@ -1,5 +1,5 @@
 import { PoolConnection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Database } from "../db";
+import { Database } from "../database";
 
 export enum PurchaseStatus {
   pending = "pending",
@@ -9,11 +9,11 @@ export enum PurchaseStatus {
 }
 
 export class PurchaseModel {
-  id?: number;
-  customer_id?: number;
-  purchase_date?: Date;
-  total_amount?: number;
-  status?: PurchaseStatus;
+  id: number;
+  customer_id: number;
+  purchase_date: Date;
+  total_amount: number;
+  status: PurchaseStatus;
 
   constructor(data: Partial<PurchaseModel> = {}) {
     this.fill(data);

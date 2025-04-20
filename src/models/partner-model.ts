@@ -1,12 +1,12 @@
 import { PoolConnection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Database } from "../db";
+import { Database } from "../database";
 import { UserModel } from "./user-model";
 
 export class PartnerModel {
-  id?: number;
-  user_id?: number;
-  company_name?: string;
-  created_at?: Date;
+  id: number;
+  user_id: number;
+  company_name: string;
+  created_at: Date;
   user?: UserModel;
 
   constructor(data: Partial<PartnerModel> = {}) {

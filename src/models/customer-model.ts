@@ -1,13 +1,13 @@
 import { PoolConnection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Database } from "../db";
+import { Database } from "../database";
 import { UserModel } from "./user-model";
 
 export class CustomerModel {
-  id?: number;
-  user_id?: number;
-  address?: string;
-  phone?: string;
-  created_at?: Date;
+  id: number;
+  user_id: number;
+  address: string;
+  phone: string;
+  created_at: Date;
   user?: UserModel;
 
   constructor(data: Partial<CustomerModel> = {}) {
@@ -55,7 +55,6 @@ export class CustomerModel {
         email: rows[0].user_email,
       });
     }
-
     return customer;
   }
 
